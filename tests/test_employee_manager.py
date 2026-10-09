@@ -11,22 +11,17 @@ from validators import (
 
 from employee_manager import add_employee
 
-
 def test_validate_employee_id():
     assert validate_employee_id("emp001") == "EMP001"
-
 
 def test_validate_name():
     assert validate_name(" Akshay ") == "Akshay"
 
-
 def test_validate_age():
     assert validate_age("25") == 25
 
-
 def test_validate_salary():
     assert validate_salary("45000") == 45000.0
-
 
 def test_validate_email():
     assert validate_email("akshay@gmail.com") == "akshay@gmail.com"
@@ -46,10 +41,7 @@ def test_add_employee(monkeypatch):
         "test@example.com"
     ])
 
-    monkeypatch.setattr(
-        "builtins.input",
-        lambda _: next(inputs)
-    )
+    monkeypatch.setattr("builtins.input",lambda _: next(inputs))
 
     add_employee(employees)
 

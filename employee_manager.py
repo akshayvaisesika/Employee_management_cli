@@ -1,16 +1,34 @@
-import os
+"""Manage employee records using JSON file storage."""
+
 import json
-from validators import(validate_age,validate_email,validate_employee_id,validate_name,validate_salary)
+import os
+
+from validators import (
+    validate_age,
+    validate_email,
+    validate_employee_id,
+    validate_name,
+    validate_salary,
+)
 from logger import logger
+
 
 DATA_FILE = "data/employees.json"
 
-def load_employees(): 
+
+def load_employees():
+    """Load employee records from the JSON file.
+
+    Returns:
+        list: Employee records loaded from the file.
+    """
     try:
         if not os.path.exists(DATA_FILE):
             return []
-        with open(DATA_FILE, "r") as file:
+
+        with open(DATA_FILE, "r", encoding="utf-8") as file:
             employees = json.load(file)
+
         logger.info("Employee data loaded successfully.")
         return employees
 
@@ -19,37 +37,42 @@ def load_employees():
         print("Error: Employee data file is corrupted.")
         return []
 
-    except OSError as e:
-        logger.error(f"Error reading employee data: {e}")
+    except OSError as error:
+        logger.error("Error reading employee data: %s", error)
         print("Error: Unable to read employee data.")
         return []
 
 
-
-
-#saving employees
 def save_employees(employees):
+    """Save employee records to the JSON file.
 
+    Args:
+        employees (list): List of employee records to save.
+    """
     try:
-        with open(DATA_FILE, "w") as file:
+        with open(DATA_FILE, "w", encoding="utf-8") as file:
             json.dump(employees, file, indent=4)
 
         logger.info("Employee data saved successfully.")
 
-    except OSError as e:
-        logger.error(f"Error saving employee data: {e}")
+    except OSError as error:
+        logger.error("Error saving employee data: %s", error)
         print("Error: Unable to save employee data.")
 
 
-
-# adding employees
-
 def add_employee(employees):
+    """Validate and add a new employee.
 
+    Args:
+        employees (list): List of existing employee records.
+    """
     # Employee ID validation
     while True:
         try:
-            emp_id = validate_employee_id(input("Enter employee ID: "))
+            emp_id = validate_employee_id(
+                input("Enter employee ID: ")
+            )
+
             duplicate = False
 
             for employee in employees:
@@ -59,12 +82,16 @@ def add_employee(employees):
 
             if duplicate:
                 print("Error: Employee ID already exists.")
-                logger.warning(f"Duplicate employee ID attempted: {emp_id}")
+                logger.warning(
+                    "Duplicate employee ID attempted: %s",
+                    emp_id,
+                )
                 continue
+
             break
 
-        except ValueError as e:
-            print(f"Invalid employee ID: {e}")
+        except ValueError as error:
+            print(f"Invalid employee ID: {error}")
 
     # Employee name
     name = validate_name(input("Enter employee name: "))
@@ -74,37 +101,30 @@ def add_employee(employees):
         try:
             age = validate_age(input("Enter employee age: "))
             break
-
-        except ValueError as e:
-            print(f"Invalid age: {e}")
+        except ValueError as error:
+            print(f"Invalid age: {error}")
 
     # Department
     department = input("Enter department: ").strip()
 
-
     # Role
     role = input("Enter role: ").strip()
-
-
 
     # Salary validation
     while True:
         try:
             salary = validate_salary(input("Enter salary: "))
             break
-
-        except ValueError as e:
-            print(f"Invalid salary: {e}")
-
+        except ValueError as error:
+            print(f"Invalid salary: {error}")
 
     # Email validation
     while True:
         try:
             email = validate_email(input("Enter email: "))
             break
-
-        except ValueError as e:
-            print(f"Invalid email: {e}")
+        except ValueError as error:
+            print(f"Invalid email: {error}")
 
     # Create employee
     employee = {
@@ -114,24 +134,30 @@ def add_employee(employees):
         "department": department,
         "role": role,
         "salary": salary,
-        "email": email
+        "email": email,
     }
 
     employees.append(employee)
 
     save_employees(employees)
-
-    logger.info(f"Employee {emp_id} added successfully.")
+    logger.info("Employee %s added successfully.", emp_id)
     print("Employee added successfully.")
 
 
-        
-
-#searching employee
-
 def search_employee(employees):
+    """Search for an employee using their employee ID.
+
+    Args:
+        employees (list): Employee records to search.
+
+    Returns:
+        dict | None: The employee record if found, otherwise None.
+    """
     try:
-        emp_id = validate_employee_id(input("Enter employee ID to search: "))
+        emp_id = validate_employee_id(
+            input("Enter employee ID to search: ")
+        )
+
         for employee in employees:
             if employee["id"] == emp_id:
                 print("\nEmployee Found")
@@ -139,37 +165,69 @@ def search_employee(employees):
 
                 for key, value in employee.items():
                     print(f"{key.capitalize()}: {value}")
-                logger.info(f"Employee {emp_id} searched successfully.")
+
+                logger.info(
+                    "Employee %s searched successfully.",
+                    emp_id,
+                )
                 return employee
 
         print("Employee not found.")
-        logger.warning(f"Employee {emp_id} not found during search.")
+        logger.warning(
+            "Employee %s not found during search.",
+            emp_id,
+        )
         return None
 
-    except ValueError as e:
-        print(f"Invalid input: {e}")
-        logger.error(f"Invalid search input: {e}")
+    except ValueError as error:
+        print(f"Invalid input: {error}")
+        logger.error("Invalid search input: %s", error)
         return None
 
-
-
-#updating_employee
 
 def update_employee(employees):
-    try:
-        emp_id = validate_employee_id(input("Enter employee ID to update: "))
-        for employee in employees:
+    """Update an existing employee's information.
 
+    Args:
+        employees (list): Employee records to update.
+
+    Returns:
+        dict | None: Updated employee record or None if not found
+        or the input is invalid.
+    """
+    try:
+        emp_id = validate_employee_id(
+            input("Enter employee ID to update: ")
+        )
+
+        for employee in employees:
             if employee["id"] == emp_id:
                 print("\nEmployee found.")
                 print("Press Enter to keep the existing value.\n")
 
-                name = input(f"Name [{employee['name']}]: ").strip()
-                age = input(f"Age [{employee['age']}]: ").strip()
-                department = input(f"Department [{employee['department']}]: ").strip()
-                role = input(f"Role [{employee['role']}]: ").strip()
-                salary = input(f"Salary [{employee['salary']}]: ").strip()
-                email = input(f"Email [{employee['email']}]: ").strip()
+                name = input(
+                    f"Name [{employee['name']}]: "
+                ).strip()
+
+                age = input(
+                    f"Age [{employee['age']}]: "
+                ).strip()
+
+                department = input(
+                    f"Department [{employee['department']}]: "
+                ).strip()
+
+                role = input(
+                    f"Role [{employee['role']}]: "
+                ).strip()
+
+                salary = input(
+                    f"Salary [{employee['salary']}]: "
+                ).strip()
+
+                email = input(
+                    f"Email [{employee['email']}]: "
+                ).strip()
 
                 if name:
                     employee["name"] = validate_name(name)
@@ -191,63 +249,113 @@ def update_employee(employees):
 
                 save_employees(employees)
 
-                logger.info(f"Employee {emp_id} updated successfully.")
+                logger.info(
+                    "Employee %s updated successfully.",
+                    emp_id,
+                )
                 print("Employee updated successfully.")
                 return employee
 
         print("Employee not found.")
-        logger.warning(f"Employee {emp_id} not found during update.")
+        logger.warning(
+            "Employee %s not found during update.",
+            emp_id,
+        )
         return None
 
-    except ValueError as e:
-        print(f"Invalid input: {e}")
-        logger.error(f"Invalid update input: {e}")
+    except ValueError as error:
+        print(f"Invalid input: {error}")
+        logger.error("Invalid update input: %s", error)
         return None
 
-
-#deleting_employee
 
 def delete_employee(employees):
+    """Delete an employee using their employee ID.
+
+    Args:
+        employees (list): Employee records to search and modify.
+    """
     try:
-        emp_id = validate_employee_id(input("Enter employee ID to delete: "))
+        emp_id = validate_employee_id(
+            input("Enter employee ID to delete: ")
+        )
 
         for employee in employees:
             if employee["id"] == emp_id:
                 employees.remove(employee)
                 save_employees(employees)
-                logger.info(f"Employee {emp_id} deleted successfully.")
+
+                logger.info(
+                    "Employee %s deleted successfully.",
+                    emp_id,
+                )
                 print("Employee deleted successfully.")
                 return
 
         print("Employee not found.")
-        logger.warning(f"Employee {emp_id} not found during deletion.")
-    except ValueError as e:
-        print(f"Invalid input: {e}")
-        logger.error(f"Invalid delete input: {e}")
+        logger.warning(
+            "Employee %s not found during deletion.",
+            emp_id,
+        )
+
+    except ValueError as error:
+        print(f"Invalid input: {error}")
+        logger.error("Invalid delete input: %s", error)
 
 
-
-#filtering_record
 def filter_employees(employees):
+    """Filter employees by department, role, and age.
 
-    department = input("Enter department (leave blank to ignore): ").strip().lower()
-    role = input("Enter role (leave blank to ignore): ").strip().lower()
-    age_input = input("Enter age (leave blank to ignore): ").strip()
+    Args:
+        employees (list): Employee records to filter.
+
+    Returns:
+        list: Employee records matching the supplied filters.
+    """
+    department = input(
+        "Enter department (leave blank to ignore): "
+    ).strip().lower()
+
+    role = input(
+        "Enter role (leave blank to ignore): "
+    ).strip().lower()
+
+    age_input = input(
+        "Enter age (leave blank to ignore): "
+    ).strip()
 
     try:
         age = int(age_input) if age_input else None
         results = []
-        for employee in employees:
-            department_match = (not department or employee["department"].lower() == department)
-            role_match = (not role or employee["role"].lower() == role)
-            age_match = (age is None or employee["age"] == age)
 
-            if department_match and role_match and age_match:
+        for employee in employees:
+            department_match = (
+                not department
+                or employee["department"].lower() == department
+            )
+
+            role_match = (
+                not role
+                or employee["role"].lower() == role
+            )
+
+            age_match = (
+                age is None
+                or employee["age"] == age
+            )
+
+            if (
+                department_match
+                and role_match
+                and age_match
+            ):
                 results.append(employee)
 
         if not results:
             print("No matching employees found.")
-            logger.warning("Employee filter returned no results.")
+            logger.warning(
+                "Employee filter returned no results."
+            )
             return []
 
         print("\nMatching Employees")
@@ -255,19 +363,27 @@ def filter_employees(employees):
 
         for employee in results:
             print(employee)
-        logger.info(f"Employee filter returned {len(results)} result(s).")
+
+        logger.info(
+            "Employee filter returned %d result(s).",
+            len(results),
+        )
         return results
 
     except ValueError:
         print("Invalid age. Please enter a valid number.")
-        logger.error("Invalid age entered during employee filtering.")
+        logger.error(
+            "Invalid age entered during employee filtering."
+        )
         return []
 
 
-
-#viewing all employee record
 def view_all_employees(employees):
+    """Display all employee records.
 
+    Args:
+        employees (list): Employee records to display.
+    """
     if not employees:
         print("\nNo employees available.")
         return
@@ -284,7 +400,9 @@ def view_all_employees(employees):
         print(f"Role       : {employee['role']}")
         print(f"Salary     : {employee['salary']}")
         print(f"Email      : {employee['email']}")
-
         print("-" * 80)
 
-    logger.info(f"Displayed {len(employees)} employee record(s).")
+    logger.info(
+        "Displayed %d employee record(s).",
+        len(employees),
+    )

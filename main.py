@@ -1,3 +1,5 @@
+"""Entry point for the Employee Management System."""
+
 from employee_manager import (
     load_employees,
     add_employee,
@@ -5,18 +7,19 @@ from employee_manager import (
     update_employee,
     delete_employee,
     filter_employees,
-    view_all_employees
+    view_all_employees,
 )
 
 from exporters import (
     export_to_json,
-    export_to_csv
+    export_to_csv,
 )
 
 from logger import logger
 
 
 def display_menu():
+    """Display the main menu of the application."""
     print("\n" + "=" * 45)
     print("        EMPLOYEE MANAGEMENT SYSTEM")
     print("=" * 45)
@@ -35,14 +38,13 @@ def display_menu():
 
 
 def main():
-
-    # Load employee data when application starts
+    """Run the Employee Management System."""
+    # Load employee data when the application starts
     employees = load_employees()
 
     logger.info("Employee Management System started.")
 
     while True:
-
         display_menu()
 
         choice = input("Enter your choice: ").strip()
@@ -74,22 +76,32 @@ def main():
         # Export JSON
         elif choice == "7":
             export_to_json(employees)
+
         # Export CSV
         elif choice == "8":
             export_to_csv(employees)
+
         # Exit
         elif choice == "9":
-            logger.info("Employee Management System closed.")
-
-            print("\nThank you for using the Employee Management System.")
+            logger.info(
+                "Employee Management System closed."
+            )
+            print(
+                "\nThank you for using the "
+                "Employee Management System."
+            )
             break
 
         # Invalid choice
         else:
-
-            print("\nInvalid choice. Please select a number from 1 to 9.")
-
-            logger.warning(f"Invalid menu choice entered: {choice}")
+            print(
+                "\nInvalid choice. "
+                "Please select a number from 1 to 9."
+            )
+            logger.warning(
+                "Invalid menu choice entered: %s",
+                choice,
+            )
 
 
 if __name__ == "__main__":
