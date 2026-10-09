@@ -80,7 +80,7 @@ def add_employee(employees):
 
     # Department
     department = input("Enter department: ").strip()
-    
+
 
     # Role
     role = input("Enter role: ").strip()
@@ -121,10 +121,7 @@ def add_employee(employees):
 
     save_employees(employees)
 
-    logger.info(
-        f"Employee {emp_id} added successfully."
-    )
-
+    logger.info(f"Employee {emp_id} added successfully.")
     print("Employee added successfully.")
 
 
@@ -146,9 +143,7 @@ def search_employee(employees):
                 return employee
 
         print("Employee not found.")
-
         logger.warning(f"Employee {emp_id} not found during search.")
-
         return None
 
     except ValueError as e:
@@ -170,18 +165,12 @@ def update_employee(employees):
                 print("Press Enter to keep the existing value.\n")
 
                 name = input(f"Name [{employee['name']}]: ").strip()
-
                 age = input(f"Age [{employee['age']}]: ").strip()
-
                 department = input(f"Department [{employee['department']}]: ").strip()
-
                 role = input(f"Role [{employee['role']}]: ").strip()
-
                 salary = input(f"Salary [{employee['salary']}]: ").strip()
-
                 email = input(f"Email [{employee['email']}]: ").strip()
 
-                # Update only values provided by the user
                 if name:
                     employee["name"] = validate_name(name)
 
@@ -203,9 +192,7 @@ def update_employee(employees):
                 save_employees(employees)
 
                 logger.info(f"Employee {emp_id} updated successfully.")
-
                 print("Employee updated successfully.")
-
                 return employee
 
         print("Employee not found.")
@@ -244,9 +231,7 @@ def delete_employee(employees):
 def filter_employees(employees):
 
     department = input("Enter department (leave blank to ignore): ").strip().lower()
-
     role = input("Enter role (leave blank to ignore): ").strip().lower()
-
     age_input = input("Enter age (leave blank to ignore): ").strip()
 
     try:
@@ -262,7 +247,6 @@ def filter_employees(employees):
 
         if not results:
             print("No matching employees found.")
-
             logger.warning("Employee filter returned no results.")
             return []
 
@@ -271,20 +255,17 @@ def filter_employees(employees):
 
         for employee in results:
             print(employee)
-
         logger.info(f"Employee filter returned {len(results)} result(s).")
         return results
 
     except ValueError:
         print("Invalid age. Please enter a valid number.")
-
         logger.error("Invalid age entered during employee filtering.")
         return []
 
 
 
 #viewing all employee record
-
 def view_all_employees(employees):
 
     if not employees:
@@ -296,27 +277,13 @@ def view_all_employees(employees):
     print("=" * 80)
 
     for employee in employees:
-        print(
-            f"ID         : {employee['id']}"
-        )
-        print(
-            f"Name       : {employee['name']}"
-        )
-        print(
-            f"Age        : {employee['age']}"
-        )
-        print(
-            f"Department : {employee['department']}"
-        )
-        print(
-            f"Role       : {employee['role']}"
-        )
-        print(
-            f"Salary     : {employee['salary']}"
-        )
-        print(
-            f"Email      : {employee['email']}"
-        )
+        print(f"ID         : {employee['id']}")
+        print(f"Name       : {employee['name']}")
+        print(f"Age        : {employee['age']}")
+        print(f"Department : {employee['department']}")
+        print(f"Role       : {employee['role']}")
+        print(f"Salary     : {employee['salary']}")
+        print(f"Email      : {employee['email']}")
 
         print("-" * 80)
 
